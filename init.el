@@ -191,6 +191,16 @@
   (progn
     (setq-default flycheck-disable-checkers 'c/c++-clang)))
 
+;; Magit is a complete text-based user interface to Git
+(use-package magit
+  :ensure t
+  :init
+  (global-set-key (kbd "C-x g") 'magit-status))
+;; Work with Git forges from the comfort of Magit 
+(use-package forge
+  :ensure t
+  :after magit)
+
 ;; Indent Javascript hook
 (add-hook 'js-mode-hook #'my/js-indent)
 
