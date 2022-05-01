@@ -246,6 +246,23 @@
        :after magit)
    #+end_src
 
+** Theme
+   #+begin_src emacs-lisp
+     ;; Zenburn theme
+     (use-package zenburn-theme
+       :ensure t)
+     ;; Solarized theme
+     (use-package solarized-theme
+       :ensure t
+       :init
+       (load-theme solarized-dark t))
+     ;; Powerline
+     (use-package powerline
+       :ensure t
+       :init
+       (powerline-default-theme))
+   #+end_src
+
 * Hook
   #+BEGIN_SRC emacs-lisp
     ;; Indent Javascript hook

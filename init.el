@@ -201,19 +201,36 @@
   :ensure t
   :after magit)
 
+;; Zenburn theme
+(use-package zenburn-theme
+  :ensure t
+  ;; :init 
+  ;; (load-theme 'zenburn t)
+  )
+;; Solarized theme
+(use-package solarized-theme
+  :ensure t
+  :init
+  (load-theme 'solarized-dark t))
+;; Powerline
+(use-package powerline
+  :ensure t
+  :init
+  (powerline-default-theme))
+
 ;; Indent Javascript hook
 (add-hook 'js-mode-hook #'my/js-indent)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(blink-cursor-blinks -1))
+;; custom-set-variables was added by Custom.
+;; If you edit it by hand, you could mess it up, so be careful.
+;; Your init file should contain only one such instance.
+;; If there is more than one, they won't work right.
+  '(blink-cursor-blinks -1))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 113 :width normal)))))
+;; custom-set-faces was added by Custom.
+;; If you edit it by hand, you could mess it up, so be careful.
+;; Your init file should contain only one such instance.
+;; If there is more than one, they won't work right.
+  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 113 :width normal)))))
