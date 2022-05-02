@@ -98,8 +98,8 @@
               package-check-signature nil)
 
 ;;NodeJS
-(setenv "PATH" (concat (getenv "PATH") ":/opt/node-v16.14.2-linux-x64/bin"))
-(setq exec-path (append exec-path '("/opt/node-v16.14.2-linux-x64/bin")))
+(setenv "PATH" (concat (getenv "PATH") ":/opt/node-v16.15.0-linux-x64/bin"))
+(setq exec-path (append exec-path '("/opt/node-v16.15.0-linux-x64/bin")))
 
 ;; Personal Elisp script
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -203,15 +203,12 @@
 
 ;; Zenburn theme
 (use-package zenburn-theme
-  :ensure t
-  ;; :init 
-  ;; (load-theme 'zenburn t)
-  )
+  :ensure t)
 ;; Solarized theme
 (use-package solarized-theme
   :ensure t
   :init
-  (load-theme 'solarized-dark t))
+  (load-theme solarized-dark t))
 ;; Powerline
 (use-package powerline
   :ensure t

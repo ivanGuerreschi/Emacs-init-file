@@ -126,8 +126,8 @@
 ** For eshell
   #+BEGIN_SRC emacs-lisp
     ;;NodeJS
-    (setenv "PATH" (concat (getenv "PATH") ":/opt/node-v16.14.2-linux-x64/bin"))
-    (setq exec-path (append exec-path '("/opt/node-v16.14.2-linux-x64/bin")))
+    (setenv "PATH" (concat (getenv "PATH") ":/opt/node-v16.15.0-linux-x64/bin"))
+    (setq exec-path (append exec-path '("/opt/node-v16.15.0-linux-x64/bin")))
   #+END_SRC
 
 ** For personal Elisp script
