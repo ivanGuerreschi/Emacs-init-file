@@ -208,7 +208,7 @@
 (use-package solarized-theme
   :ensure t
   :init
-  (load-theme solarized-dark t))
+  (load-theme 'solarized-dark t))
 ;; Powerline
 (use-package powerline
   :ensure t
