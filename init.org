@@ -41,7 +41,7 @@
     ;; Make window title the buffer name
     (setq-default frame-title-format '("%b"))
     ;; Line-style cursor similar to other text editors
-    (setq-default cursor-type 'bar)
+    (setq-default cursor-type 'box)
     ;; Line and column display
     (setq column-number-mode t)
     (setq line-number-mode t)
@@ -143,8 +143,8 @@
     (setq package-enable-at-startup nil)
 
     (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                            ("gnu" . "https://elpa.gnu.org/packages/")
-                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+			    ("gnu" . "https://elpa.gnu.org/packages/")
+			    ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
     ;; Setup use-package
     (unless (package-installed-p 'use-package)
       (package-refresh-contents)
@@ -152,7 +152,7 @@
     (eval-when-compile
       (require 'use-package))
     (setq use-package-always-ensure t)
-    
+
     ;; Automatically update Emacs packages
     (use-package auto-package-update
       :ensure t
@@ -191,8 +191,8 @@
       (bind-key "C-c C-r" 'ivy-resume)
       (ivy-mode 1)
       (setq ivy-re-builders-alist
-        '(( swiper . ivy--regex-plus)
-        (t . ivy--regex-fuzzy)))
+	'(( swiper . ivy--regex-plus)
+	(t . ivy--regex-fuzzy)))
 	:diminish ivy-mode)
 
     ;; Ivy-enhanced alternative to Isearch
@@ -204,6 +204,12 @@
     ;; Editing yaml file
     (use-package yaml-mode
       :ensure t)
+
+    ;; Editor config
+    (use-package editorconfig
+      :ensure t
+      :config
+      (editorconfig-mode 1))
 
   #+END_SRC
 
@@ -255,7 +261,8 @@
      (use-package solarized-theme
        :ensure t
        :init
-       (load-theme 'solarized-dark t))
+       (load-theme 'solarized-dark t)
+       )
      ;; Powerline
      (use-package powerline
        :ensure t

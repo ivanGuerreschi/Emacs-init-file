@@ -32,7 +32,7 @@
 ;; Make window title the buffer name
 (setq-default frame-title-format '("%b"))
 ;; Line-style cursor similar to other text editors
-(setq-default cursor-type 'bar)
+(setq-default cursor-type 'box)
 ;; Line and column display
 (setq column-number-mode t)
 (setq line-number-mode t)
@@ -109,8 +109,8 @@
 (setq package-enable-at-startup nil)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                        ("gnu" . "https://elpa.gnu.org/packages/")
-                        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+			("gnu" . "https://elpa.gnu.org/packages/")
+			("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 ;; Setup use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -171,6 +171,12 @@
 (use-package yaml-mode
   :ensure t)
 
+;; Editor config
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 ;; Company is a text completion framework for Emacs
 (use-package company
   :ensure t
@@ -208,7 +214,8 @@
 (use-package solarized-theme
   :ensure t
   :init
-  (load-theme 'solarized-dark t))
+  (load-theme 'solarized-dark t)
+  )
 ;; Powerline
 (use-package powerline
   :ensure t
@@ -219,15 +226,17 @@
 (add-hook 'js-mode-hook #'my/js-indent)
 
 (custom-set-variables
-;; custom-set-variables was added by Custom.
-;; If you edit it by hand, you could mess it up, so be careful.
-;; Your init file should contain only one such instance.
-;; If there is more than one, they won't work right.
-  '(blink-cursor-blinks -1))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(blink-cursor-blinks -1)
+ '(package-selected-packages
+   '(editorconfig cmake-mode zenburn-theme yaml-mode which-key use-package solarized-theme powerline forge flycheck diminish counsel company auto-package-update)))
 
 (custom-set-faces
-;; custom-set-faces was added by Custom.
-;; If you edit it by hand, you could mess it up, so be careful.
-;; Your init file should contain only one such instance.
-;; If there is more than one, they won't work right.
-  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 113 :width normal)))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 113 :width normal)))))
