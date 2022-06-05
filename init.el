@@ -1,14 +1,17 @@
 ;; Prevent any special-filename parsing of files loaded from the init file
 (setq file-name-handler-alist nil)
 ;; Minimize garbage collection during startup
-(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024))
 ;; Lower threshold back to 8 MiB (default is 800kB)
 (add-hook 'emacs-startup-hook
-          (lambda ()
+	  (lambda ()
 	    (setq gc-cons-threshold (expt 2 23))))
 
 ;; Disable the toolbar
 (tool-bar-mode -1)
+;; Disable scrollbar
+(scroll-bar-mode -1)
 ;; Alias for yes(y) and no(n)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; Line numbers
@@ -74,6 +77,13 @@
     (concat
     "astyle -s2 --style=gnu --pad-header --align-pointer=name --indent-col1-comments --pad-first-paren-out " (buffer-file-name)))
   (revert-buffer :ignore-auto :noconfirm))
+;; Formatting C style using clang-format
+(defun my/clang-format ()
+  (interactive)
+  (shell-command-to-string
+    (concat
+    "clang-format -i " (buffer-file-name)))
+  (revert-buffer :ignore-auto :noconfirm))
 
 ;; Ctrl-x, v, p
 (cua-mode t)
@@ -98,11 +108,8 @@
               package-check-signature nil)
 
 ;;NodeJS
-(setenv "PATH" (concat (getenv "PATH") ":/opt/node-v16.15.0-linux-x64/bin"))
-(setq exec-path (append exec-path '("/opt/node-v16.15.0-linux-x64/bin")))
-
-;; Personal Elisp script
-(add-to-list 'load-path "~/.emacs.d/lisp")
+(setenv "PATH" (concat (getenv "PATH") ":/home/ivan/.local/node-v16.15.0.app/bin"))
+(setq exec-path (append exec-path '("/home/ivan/.local/node-v16.15.0.app/bin")))
 
 ;; Setup package.el
 (require 'package)
@@ -138,6 +145,11 @@
   (which-key-mode 1)
   :diminish which-key-mode)
 
+;; Icons
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
 ;; Collection of Ivy-enhanced versions of common Emacs commands.
 (use-package counsel
   :ensure t
@@ -157,15 +169,45 @@
   (bind-key "C-c C-r" 'ivy-resume)
   (ivy-mode 1)
   (setq ivy-re-builders-alist
-    '(( swiper . ivy--regex-plus)
-    (t . ivy--regex-fuzzy)))
-    :diminish ivy-mode)
+	  '(( swiper . ivy--regex-plus)
+	  (t . ivy--regex-fuzzy)))
+  (setq ivy-use-virtual-buffers t
+	ivy-count-format "%d/%d ")
+	:diminish ivy-mode)
 
 ;; Ivy-enhanced alternative to Isearch
 (use-package swiper
   :ensure t
   :bind
   ("C-s" . 'swiper))
+
+;; Prescient
+(use-package prescient
+  :ensure t
+  :config
+  (setq prescient-sort-length-enable nil))
+(use-package ivy-prescient
+  :ensure t
+  :after (prescient counsel)
+  :config
+  (setq ivy-prescient-retain-classic-highlighting t)
+  (ivy-prescient-mode 1))
+(use-package company-prescient
+  :ensure t
+  :after (prescient company)
+  :config
+  (company-prescient-mode 1))
+(use-package selectrum-prescient
+  :ensure t)
+
+;; Tree file and directory 
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-window-fixed-size nil)
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  :bind
+  ([f8] . 'neotree-toggle))
 
 ;; Editing yaml file
 (use-package yaml-mode
@@ -175,18 +217,74 @@
 (use-package editorconfig
   :ensure t
   :config
-  (editorconfig-mode 1))
+  (editorconfig-mode 1)
+  :diminish editorconfig-mode)
+
+;; ggtags
+(use-package ggtags
+  :ensure t
+  :config
+  (add-hook 'c-mode-common-hook
+  (lambda ()
+    (when (derived-mode-p 'c-mode)
+      (ggtags-mode t))))
+  :diminish ggtags-mode)
+
+;; Path bin exec
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+;; Typescript mode
+(use-package typescript-mode
+  :ensure t)
+
+;; Vterm for Emacs
+(use-package vterm
+  :ensure t)
 
 ;; Company is a text completion framework for Emacs
 (use-package company
-  :ensure t
   :config
+  (setq-local eldoc-documentation-function #'ggtags-eldoc-function)
   (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 2)
+  (setq company-minimum-prefix-length 1)
   (setq company-selection-wrap-around t)
-  (company-tng-configure-default)
+  (setq company-backends (delete 'company-semantic company-backends))
+  (setq company-backends '((company-clang)))
+  (setq company-format-margin-function 'company-text-icons-margin)
+  (company-tng-mode)
   (global-company-mode 1)
   :diminish company-mode)
+
+;; Company C Headers
+(use-package company-c-headers
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-c-headers))
+
+;; Tree-sitter provides a buffer-local syntax tree
+(use-package tree-sitter
+  :ensure t
+  :config
+ (add-hook 'c-mode-hook #'tree-sitter-mode)
+ (add-hook 'c-mode-hook #'tree-sitter-hl-mode))
+ (use-package tree-sitter-langs
+  :ensure t)
+ (use-package tree-sitter-indent
+   :ensure t)
+
+;; Projectile a project interaction library for Emacs.
+(use-package projectile
+  :ensure t
+  :init
+  (setq projectile-completion-system 'ivy)
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+  ("s-p" . projectile-command-map)
+  ("C-c p" . projectile-command-map))
+  :diminish projectile-mode)
 
 ;; Syntax checking 
 (use-package flycheck
@@ -194,14 +292,14 @@
   :init
   (add-hook 'prog-mode-hook 'flycheck-mode)
   :config
-  (progn
-    (setq-default flycheck-disable-checkers 'c/c++-clang)))
+  (setq flycheck-disable-checkers 'c/c++-clang))
 
 ;; Magit is a complete text-based user interface to Git
 (use-package magit
   :ensure t
   :init
   (global-set-key (kbd "C-x g") 'magit-status))
+
 ;; Work with Git forges from the comfort of Magit 
 (use-package forge
   :ensure t
@@ -209,13 +307,15 @@
 
 ;; Zenburn theme
 (use-package zenburn-theme
-  :ensure t)
-;; Solarized theme
-(use-package solarized-theme
   :ensure t
   :init
-  (load-theme 'solarized-dark t)
-  )
+  (load-theme 'zenburn t))
+
+;; Solarized theme
+ (use-package solarized-theme
+  :ensure t
+  :init)
+
 ;; Powerline
 (use-package powerline
   :ensure t
@@ -226,17 +326,15 @@
 (add-hook 'js-mode-hook #'my/js-indent)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(blink-cursor-blinks -1)
- '(package-selected-packages
-   '(editorconfig cmake-mode zenburn-theme yaml-mode which-key use-package solarized-theme powerline forge flycheck diminish counsel company auto-package-update)))
+;; custom-set-variables was added by Custom.
+;; If you edit it by hand, you could mess it up, so be careful.
+;; Your init file should contain only one such instance.
+;; If there is more than one, they won't work right.
+  '(blink-cursor-blinks -1))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 113 :width normal)))))
+;; custom-set-faces was added by Custom.
+;; If you edit it by hand, you could mess it up, so be careful.
+;; Your init file should contain only one such instance.
+;; If there is more than one, they won't work right.
+  '(default ((t (:family "DejaVuSansMono Nerd Font" :foundry "PfEd" :slant normal :weight normal :height 130 :width normal)))))
