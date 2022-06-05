@@ -220,14 +220,13 @@
 
     ;; Prescient
     (use-package prescient
-      :ensure t
-      :config
-      (setq prescient-sort-length-enable nil))
+      :ensure t)
     (use-package ivy-prescient
       :ensure t
       :after (prescient counsel)
       :config
-      (setq ivy-prescient-retain-classic-highlighting t)
+      (setq ivy-prescient-retain-classic-highlighting t
+            prescient-sort-length-enable nil)
       (ivy-prescient-mode 1))
     (use-package company-prescient
       :ensure t
